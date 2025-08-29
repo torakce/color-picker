@@ -9,6 +9,15 @@ def rgb_to_hsv(r: int, g: int, b: int):
     """
     return colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
 
+
+def add_to_history(history, color, limit=10):
+    """Add a color to the beginning of the history list.
+
+    Ensures the history does not grow beyond ``limit`` items.
+    Returns the new history list.
+    """
+    return [color] + history[: limit - 1]
+
 def main():
     root = tk.Tk()
     root.title("Color Picker")
@@ -17,7 +26,18 @@ def main():
     rgb_var = tk.StringVar()
     hsv_var = tk.StringVar()
 
+    color_history = []
+    history_listbox = tk.Listbox(root, height=10)
+
+    def copy_rgb():
+        text = rgb_var.get()
+        if text:
+            root.clipboard_clear()
+            root.clipboard_append(text)
+            root.update()
+
     def pick_color():
+        nonlocal color_history
         result = colorchooser.askcolor()
         if not result or not result[0]:
             return
@@ -33,6 +53,11 @@ def main():
         root.clipboard_append(hex_color)
         root.update()
 
+        color_history = add_to_history(color_history, hex_color)
+        history_listbox.delete(0, tk.END)
+        for c in color_history:
+            history_listbox.insert(tk.END, c)
+
     tk.Button(root, text="Pick color", command=pick_color).pack(pady=10)
 
     tk.Label(root, text="HEX:").pack()
@@ -40,9 +65,13 @@ def main():
 
     tk.Label(root, text="RGB:").pack()
     tk.Label(root, textvariable=rgb_var).pack()
+    tk.Button(root, text="Copy RGB", command=copy_rgb).pack(pady=5)
 
     tk.Label(root, text="HSV:").pack()
     tk.Label(root, textvariable=hsv_var).pack()
+
+    tk.Label(root, text="History:").pack()
+    history_listbox.pack()
 
     root.mainloop()
 
