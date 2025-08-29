@@ -21,3 +21,25 @@ Use the **Copy RGB** button to copy the RGB value to the clipboard.
 ```bash
 python -m unittest
 ```
+
+## Packaging
+
+Use [PyInstaller](https://pyinstaller.org/) to build standalone executables for
+Windows and macOS.
+
+### Windows
+
+```bash
+pip install pyinstaller
+pyinstaller color_picker.spec
+```
+
+### macOS
+
+```bash
+pip install pyinstaller
+pyinstaller color_picker.spec
+```
+
+The binaries will be available in the `dist/` directory once the build
+completes.
